@@ -98,7 +98,7 @@ public class Calculator
 		}
 	
 		public void init() {
-			number.clear();// 清空数组
+			number.clear();
 			calculation.clear();
 		}
 	
