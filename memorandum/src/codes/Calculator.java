@@ -30,7 +30,7 @@ public class Calculator
 	  }
 	  
 
-		// 成员变量
+		
 		private List<Double> number;
 		private List<Character> calculation;
 		private String text;
@@ -49,7 +49,7 @@ public class Calculator
 			} else {
 				return "error";
 			}
-			//throw  new Exception("除数不能为0");
+			
 		}
 			
 		
@@ -125,11 +125,11 @@ public class Calculator
 		}
 
 		private boolean check() {
-			if (text == null || !text.matches("[0-9+\\-*/]+"))// 正则表达式
+			if (text == null || !text.matches("[0-9+\\-*/]+"))
 				return false;
 
-			String regex = "\\d+";// 数字
-			String regex1 = "[+\\-*/]+";// 计算符
+			String regex = "\\d+";
+			String regex1 = "[+\\-*/]+";
 			if (findCount(text, regex1, 1) == -1)
 				return false;
 			return findCount(text, regex1, 1) == findCount(text, regex, 0) - 1;
