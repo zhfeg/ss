@@ -1,0 +1,84 @@
+<project name="github" basedir="." default="test">
+	<property name="src" value="ss/memorandum/src"/>
+	<property name="test" value="ss/memorandum/test"/>
+	<property name="lib" value="ss/memorandum/lib"/>
+	<property name="classes" value="classes"/>
+	<property name="testClasses" value="testClasses"/>
+	<property name="xmlReport" value="xmlReport"/>
+	<property name="htmlReport" value="htmlReport"/>
+	<property name="bin" value="bin"/>
+	<path id="classpath">
+		<fileset dir="${lib}">
+			<include name="*.jar"/>
+		</fileset>
+		<!--<path path="${classes}"/>-->
+		<path path="${classes};${testClasses}"/> 
+	</path>
+	
+	<macrodef name = "git">
+  <attribute name = "command" />
+  <attribute name = "dir" default = "." />
+  <element name = "args" optional = "true" />
+  <sequential>
+     <echo message = "git @{command}" />
+     <exec executable = "git" dir = "@{dir}">
+        <arg value = "@{command}" />
+        <args/>
+     </exec>
+  </sequential>
+	</macrodef>
+	<macrodef name = "git-clone-pull">
+		<attribute name = "repository" />
+		<sequential>
+			<git command = "clone">
+				<args>
+				<arg value = "@{repository}" />
+				</args>
+			</git>
+		</sequential>
+	</macrodef>
+	
+	<target name="git">
+		<git-clone-pull repository="https://github.com/zhfeg/memo.git" />
+	</target>
+	
+	<target name="makedir" depends="git">
+		<mkdir dir="${classes}"/>
+		<mkdir dir="${testClasses}"/>
+		<mkdir dir="${xmlReport}"/>
+		<mkdir dir="${htmlReport}"/>
+		<mkdir dir="${bin}"/>
+	</target>
+	
+	<target name="compile" depends="makedir">
+		<javac srcdir="${src}" destdir="${classes}" debug="on" includeantruntime="false">
+			<classpath refid="classpath"/>
+		</javac>
+		<echo message="classpath= ${lib}/junit-4.8.2.jar" />
+		<javac srcdir="${test}" destdir="${testClasses}"  debug="on" includeantruntime="false">
+			<classpath refid="classpath" />
+		</javac>
+	</target>
+	<target name="jar" depends="compile">
+		<jar destfile="${bin}/calculator.jar" basedir="${classes}"/>
+	</target>
+	<target name="test" depends="jar">
+		<echo message="start run junit test" />
+		<junit printsummary="withOutAndErr" fork="on">
+			<classpath refid="classpath"/>
+			<formatter type="xml"/>
+			<batchtest todir="${xmlReport}">
+				<fileset dir="${test}">
+					<include name="**/test*.java"/>
+				</fileset>
+			</batchtest>
+		</junit>
+		<junitreport todir="${htmlReport}">
+				<fileset dir="${xmlReport}">
+					<include name="TEST-*.xml"/>
+				</fileset>
+				<report format="noframes" todir="${htmlReport}"/>
+		</junitreport>
+		<echo message="test is end"/>
+	</target>
+</project>
